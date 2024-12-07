@@ -1,6 +1,6 @@
-// pages/ProductForm.js
 import React, { useState, useEffect } from 'react';
 import { createProduct, updateProduct, getProductById, getUnitsOfMeasure, getOrganizationTypes } from '../services/productService';
+import { useError } from '../contexts/ErrorContext'; // Импортируем контекст ошибок
 import {
   Container,
   Typography,
@@ -32,6 +32,9 @@ function ProductForm() {
   const [units, setUnits] = useState([]);
   const [orgTypes, setOrgTypes] = useState([]);
 
+  // Подключаем глобальный контекст ошибок
+  const { addError } = useError();
+
   // Загружаем enum-значения для unitOfMeasure и organizationType при монтировании компонента
   useEffect(() => {
     fetchEnums();
@@ -49,6 +52,23 @@ function ProductForm() {
       const orgTypesResponse = await getOrganizationTypes();
       setOrgTypes(orgTypesResponse.data);
     } catch (error) {
+      // Проверка кода ошибки и добавление соответствующего сообщения
+      if (error.response) {
+        // Сервер вернул ошибку (например, 404, 500 и т.д.)
+        if (error.response.status === 404) {
+          addError('Не удалось найти данные для выпадающих списков');
+        } else if (error.response.status === 500) {
+          addError('Внутренняя ошибка сервера при загрузке данных');
+        } else {
+          addError(`Ошибка: ${error.response.status} - ${error.response.data.message || 'Неизвестная ошибка'}`);
+        }
+      } else if (error.request) {
+        // Ошибка, когда запрос был сделан, но ответа не получено
+        addError('Сетевая ошибка. Пожалуйста, проверьте подключение');
+      } else {
+        // Ошибка при настройке запроса
+        addError('Ошибка при подготовке запроса');
+      }
       console.error("Ошибка при получении данных для выпадающих списков", error);
     }
   };
@@ -59,9 +79,27 @@ function ProductForm() {
       const response = await getProductById(id);
       setInitialValues(response.data);
     } catch (error) {
+      // Проверка кода ошибки и добавление соответствующего сообщения
+      if (error.response) {
+        // Сервер вернул ошибку (например, 404, 500 и т.д.)
+        if (error.response.status === 404) {
+          addError('Продукт не найден');
+        } else if (error.response.status === 500) {
+          addError('Внутренняя ошибка сервера при загрузке продукта');
+        } else {
+          addError(`Ошибка: ${error.response.status} - ${error.response.data.message || 'Неизвестная ошибка'}`);
+        }
+      } else if (error.request) {
+        // Ошибка, когда запрос был сделан, но ответа не получено
+        addError('Сетевая ошибка. Пожалуйста, проверьте подключение');
+      } else {
+        // Ошибка при настройке запроса
+        addError('Ошибка при подготовке запроса');
+      }
       console.error("Ошибка при получении данных продукта", error);
     }
   };
+
 
   // Схема валидации для полей формы
   const validationSchema = Yup.object().shape({
@@ -90,6 +128,7 @@ function ProductForm() {
       }
       navigate('/');
     } catch (error) {
+      addError('Ошибка при сохранении данных продукта');
       console.error("Ошибка при сохранении данных продукта", error);
     }
   };

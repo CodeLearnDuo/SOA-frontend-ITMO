@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getProducts } from '../services/productService';
+import { useError } from '../contexts/ErrorContext'; // Импортируем контекст ошибок
 import {
   Container,
   Typography,
@@ -25,23 +26,54 @@ function ProductList() {
   const [sortFields, setSortFields] = useState("id"); // Поле для сортировки
   const [filters, setFilters] = useState(""); // Поле для фильтрации
   const [anchorEl, setAnchorEl] = useState(null);
+  const { addError } = useError(); // Подключаем глобальную функцию для отображения ошибок
 
   useEffect(() => {
     fetchProducts();
   }, [page, size]);
 
   const fetchProducts = async () => {
-    const sortArray = sortFields ? sortFields.split(',').map((field) => field.trim()) : ["id"];
-    const filterArray = filters ? filters.split(',').map((filter) => filter.trim()) : [];
+    try {
+      const sortArray = sortFields ? sortFields.split(',').map((field) => field.trim()) : ["id"];
+      const filterArray = filters ? filters.split(',').map((filter) => filter.trim()) : [];
 
-    const response = await getProducts({
-      page,
-      size,
-      sort: sortArray,
-      filter: filterArray.length > 0 ? filterArray : undefined,
-    });
+      const response = await getProducts({
+        page,
+        size,
+        sort: sortArray,
+        filter: filterArray.length > 0 ? filterArray : undefined,
+      });
 
-    setProducts(response.data.content);
+      setProducts(response.data.content);
+    } catch (err) {
+      // Используем глобальный контекст для отображения ошибок
+      if (err.response) {
+        const { status, data } = err.response;
+        let message = 'An error occurred.';
+        switch (status) {
+          case 400:
+            message = data.message || 'Invalid query parameters.';
+            break;
+          case 404:
+            message = data.message || 'Resource not found.';
+            break;
+          case 409:
+            message = data.message || 'Data conflict detected.';
+            break;
+          case 422:
+            message = data.message || 'Validation failed.';
+            break;
+          case 500:
+            message = data.message || 'Internal server error.';
+            break;
+          default:
+            message = data.message || 'Unknown error occurred.';
+        }
+        addError(message);
+      } else {
+        addError('Network error. Failed to connect to the server.');
+      }
+    }
   };
 
   const handleSortChange = (event) => {

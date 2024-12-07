@@ -1,7 +1,7 @@
-// pages/PriceSum.js
 import React, { useState, useEffect } from 'react';
 import { getPriceSum } from '../services/productService';
 import { increasePrices } from '../services/ebayService';
+import { useError } from '../contexts/ErrorContext'; // Импортируем контекст ошибок
 import {
   Container,
   Typography,
@@ -12,14 +12,25 @@ import {
 function PriceSum() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [increasePercent, setIncreasePercent] = useState('');
+  const { addError } = useError(); // Подключаем глобальный контекст ошибок
 
   useEffect(() => {
     fetchPriceSum();
   }, []);
 
   const fetchPriceSum = async () => {
-    const response = await getPriceSum();
-    setTotalPrice(response.data.totalPrice);
+    try {
+      const response = await getPriceSum();
+      setTotalPrice(response.data.totalPrice);
+    } catch (error) {
+      // Обработка ошибок при получении общей суммы цен
+      if (error.response?.status === 500) {
+        addError('Ошибка на сервере при получении общей суммы цен.');
+      } else {
+        addError('Ошибка при получении общей суммы цен. Попробуйте позже.');
+      }
+      console.error(error);
+    }
   };
 
   const handleIncrease = async () => {
@@ -27,8 +38,15 @@ function PriceSum() {
       await increasePrices(increasePercent);
       fetchPriceSum(); // Обновить сумму после изменения цен
     } catch (error) {
+      // Обработка ошибок при увеличении цен
+      if (error.response?.status === 400) {
+        addError('Указано некорректное значение процента увеличения.');
+      } else if (error.response?.status === 500) {
+        addError('Ошибка на сервере при увеличении цен.');
+      } else {
+        addError('Ошибка при увеличении цен. Попробуйте позже.');
+      }
       console.error(error);
-      // Обработка ошибок
     }
   };
 

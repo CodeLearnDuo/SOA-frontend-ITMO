@@ -1,6 +1,6 @@
-// pages/ProductDetail.js
 import React, { useState, useEffect } from 'react';
 import { getProductById, deleteProduct } from '../services/productService';
+import { useError } from '../contexts/ErrorContext'; // Импортируем контекст ошибок
 import {
   Container,
   Typography,
@@ -16,6 +16,9 @@ function ProductDetail() {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
 
+  // Подключаем контекст ошибок
+  const { addError } = useError();
+
   useEffect(() => {
     fetchProduct();
   }, [id]);
@@ -25,8 +28,13 @@ function ProductDetail() {
       const response = await getProductById(id);
       setProduct(response.data);
     } catch (error) {
+      // Обработка ошибок при загрузке продукта
+      if (error.response?.status === 404) {
+        addError('Продукт не найден!');
+      } else {
+        addError('Ошибка при загрузке данных продукта. Попробуйте позже.');
+      }
       console.error(error);
-      // Обработка ошибок
     }
   };
 
@@ -35,8 +43,15 @@ function ProductDetail() {
       await deleteProduct(id);
       navigate('/');
     } catch (error) {
+      // Обработка ошибок при удалении продукта
+      if (error.response?.status === 403) {
+        addError('У вас нет прав для удаления этого продукта.');
+      } else if (error.response?.status === 404) {
+        addError('Продукт не найден для удаления.');
+      } else {
+        addError('Ошибка при удалении продукта. Попробуйте позже.');
+      }
       console.error(error);
-      // Обработка ошибок
     }
   };
 
