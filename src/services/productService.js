@@ -2,7 +2,7 @@
 import axios from 'axios';
 import qs from 'qs';
 
-const API_BASE_URL = 'https://localhost:8443';
+const API_BASE_URL = 'https://localhost:25543';
 
 export const getProducts = async ({ page = 1, size = 10, sort = ["id"], filter }) => {
   const params = {
@@ -37,11 +37,11 @@ export const deleteProduct = (id) => {
 };
 
 export const getUnitsOfMeasure = () => {
-  return axios.get(`${API_BASE_URL}/enums/unit-of-measure`);
+  return axios.get(`${API_BASE_URL}/api/v1/enums/unit-of-measure`);
 };
 
 export const getOrganizationTypes = () => {
-  return axios.get(`${API_BASE_URL}/enums/organization-type`);
+  return axios.get(`${API_BASE_URL}/api/v1/enums/organization-type`);
 };
 
 export const getManufacturers = () => {
