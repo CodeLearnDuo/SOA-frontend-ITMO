@@ -77,6 +77,16 @@ function ProductForm() {
   const fetchProduct = async () => {
     try {
       const response = await getProductById(id);
+
+      // Убедимся, что значение organization type установлено корректно
+      const typeExists = orgTypes.includes(response.data.manufacturer.type);
+      if (!typeExists) {
+        addError(
+          `Organization type "${response.data.manufacturer.type}" не найден в доступных типах.`
+        );
+      }
+
+
       setInitialValues(response.data);
     } catch (error) {
       // Проверка кода ошибки и добавление соответствующего сообщения

@@ -35,7 +35,7 @@ function ProductList() {
   const fetchProducts = async () => {
     try {
       const sortArray = sortFields ? sortFields.split(',').map((field) => field.trim()) : ["id"];
-      const filterArray = filters ? filters.split(',').map((filter) => filter.trim()) : [];
+      const filterArray = filters ? replaceStrings(filters).split(',').map((filter) => filter.trim()) : [];
 
       const response = await getProducts({
         page,
@@ -99,6 +99,14 @@ function ProductList() {
   const handleInfoClose = () => {
     setAnchorEl(null);
   };
+
+  function replaceStrings(input) {
+    return input
+        .replace(/unit\[/g, "unitOfMeasure[")
+        .replace(/Unit\[/g, "unitOfMeasure[")
+        .replace(/manufacturer\[/g, "manufacturer.name[")
+        .replace(/Manufacturer\[/g, "manufacturer.name[");
+}
 
   const open = Boolean(anchorEl);
   const popoverId = open ? 'sort-filter-info-popover' : undefined;
