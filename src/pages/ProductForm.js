@@ -80,7 +80,7 @@ function ProductForm() {
 
       // Убедимся, что значение organization type установлено корректно
       const typeExists = orgTypes.includes(response.data.manufacturer.type);
-      
+
       setInitialValues(response.data);
     } catch (error) {
       // Проверка кода ошибки и добавление соответствующего сообщения
@@ -112,7 +112,7 @@ function ProductForm() {
       x: Yup.number().required('Required'),
       y: Yup.number().max(398, 'Must be less than or equal to 398').required('Required'),
     }),
-    price: Yup.number().positive('Must be greater than 0').required('Required'),
+    price: Yup.number().positive('Must be greater than 0').nullable(),
     partNumber: Yup.string(),
     unitOfMeasure: Yup.string().required('Required'),
     manufacturer: Yup.object().shape({
