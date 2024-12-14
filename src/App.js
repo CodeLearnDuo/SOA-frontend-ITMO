@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'; // Изменяем BrowserRouter на HashRouter
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
 import ProductForm from './pages/ProductForm';
@@ -12,7 +12,7 @@ import { ErrorProvider } from './contexts/ErrorContext'; // Импорт про�
 function App() {
   return (
     <ErrorProvider> {/* Оборачиваем приложение в ErrorProvider */}
-      <Router>
+      <Router> {/* Используем HashRouter */}
         <Navbar />
         <Routes>
           <Route path="/" element={<ProductList />} />
