@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 import InfoIcon from '@mui/icons-material/Info';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import Tooltip from '@mui/material/Tooltip';
 
 
 function ProductList() {
@@ -118,11 +119,11 @@ function ProductList() {
 
   function replaceStrings(input) {
     return input
-        .replace(/unit\[/g, "unitOfMeasure[")
-        .replace(/Unit\[/g, "unitOfMeasure[")
-        .replace(/manufacturer\[/g, "manufacturer.name[")
-        .replace(/Manufacturer\[/g, "manufacturer.name[");
-}
+      .replace(/unit\[/g, "unitOfMeasure[")
+      .replace(/Unit\[/g, "unitOfMeasure[")
+      .replace(/manufacturer\[/g, "manufacturer.name[")
+      .replace(/Manufacturer\[/g, "manufacturer.name[");
+  }
 
   const open = Boolean(anchorEl);
   const popoverId = open ? 'sort-filter-info-popover' : undefined;
@@ -162,10 +163,10 @@ function ProductList() {
         }}
       >
         <Typography style={{ padding: 10, maxWidth: 300 }}>
-          <strong>Sorting:</strong> Enter fields for sorting, e.g., `-price,name`. Available fields: 
+          <strong>Sorting:</strong> Enter fields for sorting, e.g., `-price,name`. Available fields:
           <em>id, name, creationDate, price, partNumber, unitOfMeasure, coordinates.x, coordinates.y, manufacturer.id, manufacturer.name, manufacturer.employeesCount, manufacturer.type</em>. Prefix with `-` for descending order.
           <br /><br />
-          <strong>Filtering:</strong> Enter filters in the format `field[operator]=value`, e.g., `id[eq]=1,price[gt]=100`. Supported operators: 
+          <strong>Filtering:</strong> Enter filters in the format `field[operator]=value`, e.g., `id[eq]=1,price[gt]=100`. Supported operators:
           <em>eq (equal), ne (not equal), gt (greater than), lt (less than), gte (greater than or equal to), lte (less than or equal to)</em>.
         </Typography>
       </Popover>
@@ -187,7 +188,7 @@ function ProductList() {
             Apply Sort
           </Button>
         </Grid>
-        
+
         <Grid item xs={4}>
           <TextField
             label="Page Size"
@@ -231,7 +232,15 @@ function ProductList() {
             {products.map((product) => (
               <TableRow key={product.id} component={Link} to={`/products/${product.id}`} style={{ cursor: 'pointer' }}>
                 <TableCell>{product.id}</TableCell>
-                <TableCell>{product.name}</TableCell>
+                <TableCell>
+                  {product.name.length > 20 ? (
+                    <Tooltip title={product.name} arrow>
+                      <span>{product.name.substring(0, 20)}...</span>
+                    </Tooltip>
+                  ) : (
+                    product.name
+                  )}
+                </TableCell>
                 <TableCell>{product.price || 'N/A'}</TableCell>
                 <TableCell>{product.unitOfMeasure}</TableCell>
                 <TableCell>{product.manufacturer.name}</TableCell>
@@ -241,8 +250,8 @@ function ProductList() {
         </Table>
       </TableContainer>
 
-    {/* Кнопки для переключения страниц */}
-    <Grid container spacing={2} style={{ marginTop: 20 }} alignItems="center" justifyContent="center">
+      {/* Кнопки для переключения страниц */}
+      <Grid container spacing={2} style={{ marginTop: 20 }} alignItems="center" justifyContent="center">
         <Grid item>
           <IconButton onClick={() => handlePageChange('prev')} disabled={page === 1}>
             <NavigateBeforeIcon />

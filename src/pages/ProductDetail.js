@@ -64,13 +64,14 @@ function ProductDetail() {
       <Typography variant="h4" gutterBottom>
         Product Details
       </Typography>
-      <Card>
+      <Card style={{ maxWidth: 600 }}>
         <CardContent>
-          <Typography variant="h5">{product.name}</Typography>
+          <Typography variant="h5" style={{ wordWrap: 'break-word' }}>
+            {product.name}
+          </Typography>
           <Typography>Price: {product.price || 'N/A'}</Typography>
           <Typography>Unit: {product.unitOfMeasure}</Typography>
           <Typography>Manufacturer: {product.manufacturer.name}</Typography>
-          {/* Дополнительные поля */}
         </CardContent>
       </Card>
       <Grid container spacing={2} style={{ marginTop: 20 }}>
