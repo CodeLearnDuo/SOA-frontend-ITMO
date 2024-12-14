@@ -15,9 +15,13 @@ import {
   TextField,
   Grid,
   Popover,
+  IconButton,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import InfoIcon from '@mui/icons-material/Info';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -74,6 +78,18 @@ function ProductList() {
         addError('Network error. Failed to connect to the server.');
       }
     }
+  };
+
+  const handlePageChange = (direction) => {
+    if (direction === 'next') {
+      setPage((prev) => prev + 1);
+    } else if (direction === 'prev' && page > 1) {
+      setPage((prev) => prev - 1);
+    }
+  };
+
+  const handleSizeChange = (event) => {
+    setSize(parseInt(event.target.value, 10) || 10);
   };
 
   const handleSortChange = (event) => {
@@ -171,6 +187,16 @@ function ProductList() {
             Apply Sort
           </Button>
         </Grid>
+        
+        <Grid item xs={4}>
+          <TextField
+            label="Page Size"
+            type="number"
+            value={size}
+            onChange={handleSizeChange}
+            fullWidth
+          />
+        </Grid>
 
         {/* Поле ввода для фильтрации */}
         <Grid item xs={8}>
@@ -214,6 +240,24 @@ function ProductList() {
           </TableBody>
         </Table>
       </TableContainer>
+
+    {/* Кнопки для переключения страниц */}
+    <Grid container spacing={2} style={{ marginTop: 20 }} alignItems="center" justifyContent="center">
+        <Grid item>
+          <IconButton onClick={() => handlePageChange('prev')} disabled={page === 1}>
+            <NavigateBeforeIcon />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <Typography variant="body1">Page: {page}</Typography>
+        </Grid>
+        <Grid item>
+          <IconButton onClick={() => handlePageChange('next')}>
+            <NavigateNextIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+
     </Container>
   );
 }
