@@ -189,16 +189,6 @@ function ProductList() {
           </Button>
         </Grid>
 
-        <Grid item xs={4}>
-          <TextField
-            label="Page Size"
-            type="number"
-            value={size}
-            onChange={handleSizeChange}
-            fullWidth
-          />
-        </Grid>
-
         {/* Поле ввода для фильтрации */}
         <Grid item xs={8}>
           <TextField
@@ -215,6 +205,17 @@ function ProductList() {
             Apply Filter
           </Button>
         </Grid>
+      </Grid>
+
+
+      <Grid item xs={4} style={{ marginTop: 20 }}>
+        <TextField
+          label="Page Size"
+          type="number"
+          value={size}
+          onChange={handleSizeChange}
+          fullWidth
+        />
       </Grid>
 
       <TableContainer component={Paper} style={{ marginTop: 20 }}>
