@@ -29,6 +29,7 @@ export const createProduct = (product) => {
 };
 
 export const updateProduct = (id, product) => {
+  console.log("updated product: " + product)
   return axios.patch(`${API_BASE_URL}/api/v1/products/${id}`, product);
 };
 

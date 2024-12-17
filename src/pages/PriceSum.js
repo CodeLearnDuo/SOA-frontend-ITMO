@@ -21,6 +21,7 @@ function PriceSum() {
   const fetchPriceSum = async () => {
     try {
       const response = await getPriceSum();
+      console.log('API Response:', response);
       setTotalPrice(response.data.totalPrice);
     } catch (error) {
       // Обработка ошибок при получении общей суммы цен
@@ -55,7 +56,11 @@ function PriceSum() {
       <Typography variant="h4" gutterBottom>
         Total Price of All Products
       </Typography>
-      <Typography variant="h5">{`$${totalPrice.toFixed(2)}`}</Typography>
+      {totalPrice === undefined ? (
+        <Typography variant="h5">Loading...</Typography>
+      ) : (
+        <Typography variant="h5">{`$${totalPrice.toFixed(2)}`}</Typography>
+      )}
       <TextField
         label="Increase Percent"
         value={increasePercent}
@@ -63,7 +68,12 @@ function PriceSum() {
         type="number"
         style={{ marginTop: 20 }}
       />
-      <Button variant="contained" color="primary" onClick={handleIncrease} style={{ marginLeft: 10, marginTop: 20 }}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleIncrease}
+        style={{ marginLeft: 10, marginTop: 20 }}
+      >
         Increase Prices
       </Button>
     </Container>
