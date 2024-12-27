@@ -29,8 +29,33 @@ export const createProduct = (product) => {
 };
 
 export const updateProduct = (id, product) => {
-  console.log("updated product: " + product)
-  return axios.patch(`${API_BASE_URL}/api/v1/products/${id}`, product);
+  // "Вытаскиваем" только нужные для ProductInput поля
+  const {
+    name,
+    coordinates,
+    price,
+    partNumber,
+    unitOfMeasure,
+    manufacturer,
+  } = product;
+
+  // Для manufacturer тоже берём только то, что указано в OrganizationInput
+  const { name: mName, employeesCount, type } = manufacturer;
+
+  const productInput = {
+    name,
+    coordinates,
+    price,
+    partNumber,
+    unitOfMeasure,
+    manufacturer: {
+      name: mName,
+      employeesCount,
+      type,
+    },
+  };
+
+  return axios.patch(`${API_BASE_URL}/api/v1/products/${id}`, productInput);
 };
 
 export const deleteProduct = (id) => {
